@@ -375,8 +375,8 @@ public class OSRef extends CoordinateSystem {
     return "(" + easting + ", " + northing + ")";
   }
 
-  private enum Precision {
-    SIX(100), EIGHT(10);
+  public enum Precision {
+    SIX_DIGITS(100), EIGHT_DIGITS(10);
 
     private int precision;
 
@@ -393,17 +393,17 @@ public class OSRef extends CoordinateSystem {
    * @return a six-figure representation this OSGB grid reference i.e XY123456
    */
   public String toSixFigureString() {
-    return getOsRefWithPrecisionOf(Precision.SIX);
+    return getOsRefWithPrecisionOf(Precision.SIX_DIGITS);
   }
 
   /**
    * @return a six-figure representation this OSGB grid reference i.e XY12345678
    */
   public String toEightFigureString() {
-    return getOsRefWithPrecisionOf(Precision.EIGHT);
+    return getOsRefWithPrecisionOf(Precision.EIGHT_DIGITS);
   }
 
-  private String getOsRefWithPrecisionOf(Precision precision) {
+  public String getOsRefWithPrecisionOf(Precision precision) {
     int hundredkmE = (int) Math.floor(easting / 100000);
     int hundredkmN = (int) Math.floor(northing / 100000);
     String firstLetter;
