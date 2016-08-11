@@ -380,7 +380,7 @@ public class OSRef extends CoordinateSystem {
 
     private int precision;
 
-    private Precision(int precision) {
+    Precision(int precision) {
       this.precision = precision;
     }
 
@@ -389,15 +389,21 @@ public class OSRef extends CoordinateSystem {
     }
   }
 
+  @Deprecated
   /**
    * @return a six-figure representation this OSGB grid reference i.e XY123456
+   *
+   * @deprecated use {@link #getOsRefWithPrecisionOf(Precision)} instead.
    */
   public String toSixFigureString() {
     return getOsRefWithPrecisionOf(Precision.SIX_DIGITS);
   }
 
+  @Deprecated
   /**
    * @return a six-figure representation this OSGB grid reference i.e XY12345678
+   *
+   * @deprecated use {@link #getOsRefWithPrecisionOf(Precision)} instead.
    */
   public String toEightFigureString() {
     return getOsRefWithPrecisionOf(Precision.EIGHT_DIGITS);
@@ -586,3 +592,4 @@ public class OSRef extends CoordinateSystem {
 
   }
 }
+
