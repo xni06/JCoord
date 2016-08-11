@@ -1,4 +1,10 @@
-This is a repo of the 2006 [Jcoord](http://www.jstott.me.uk/jcoord) project so that it can be maintained by the open-source community.
+Conversion between latitude/longitude and grid references is not as simple as one would expect. Indeed, the maths involved is rather complex and not really for the faint-hearted! I have created a Java package which provides a simple API to allow conversion between OSGB (Ordnance Survey of Great Britain) grid references, UTM (Universal Transverse Mercator) references and latitude/longitude. OSGB Grid references can be returned as a standard six-figure grid reference using the 100km grid square letters (e.g. SK619847).
+
+_Note: as from release 1.2, it is now possible to obtain an eight-figure grid reference._
+
+The Jcoord script also contains a method to allow the calculation of the surface distance between two points of latitude/longitude.
+
+_Note that is a repo of the 2006 [Jcoord](http://www.jstott.me.uk/jcoord) project so that it can be maintained by the open-source community._
 
 Below is the original readme.txt
 
