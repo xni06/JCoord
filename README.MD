@@ -1,3 +1,10 @@
+This is a repo of the 2006 [Jcoord](http://www.jstott.me.uk/jcoord) project so that it can be maintained by the open-source community.
+
+Please see commits for history beyond the author's original 1.1-b version.
+
+Below is the original readme.txt
+
+```
 --------------------------------------------------------------------------
  Jcoord
  readme.txt
@@ -77,3 +84,4 @@ VERSION HISTORY
   - Fixed slight errors in OSRef to LatLng conversions.
  1.0 - 11 Feb 2006
   - Initial version created from PHPcoord v2.2.
+```
