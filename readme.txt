@@ -1,4 +1,4 @@
-This is a repo of the 2006 http://www.jstott.me.uk/jcoord project so that it can be maintained by the open-source community.
+This is a repo of the 2006 [http://www.jstott.me.uk/jcoord](Link URL) project so that it can be maintained by the open-source community.
 
 Please see commits for history beyond the author's original 1.1-b version.
 
