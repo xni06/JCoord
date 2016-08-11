@@ -9,11 +9,11 @@ import uk.me.jstott.jcoord.ellipsoid.Airy1830Ellipsoid;
  * href="http://www.jstott.me.uk/jcoord/">Jcoord</a> website for more
  * information.
  * </p>
- * 
+ *
  * <p>
  * Class to represent an Ordnance Survey of Great Britain (OSGB) grid reference.
  * </p>
- * 
+ *
  * <p>
  * <b>British National Grid</b><br>
  * <ul>
@@ -24,7 +24,7 @@ import uk.me.jstott.jcoord.ellipsoid.Airy1830Ellipsoid;
  * <li>False co-ordinates of origin: 400000m east, -100000m north</li>
  * </ul>
  * </p>
- * 
+ *
  * <p>
  * A full reference includes a two-character code identifying a particular
  * 100,000m grid square. The table below shows how the two-character 100,000m
@@ -32,7 +32,7 @@ import uk.me.jstott.jcoord.ellipsoid.Airy1830Ellipsoid;
  * the grid. Squares without values fall outside the boundaries of the British
  * National Grid.
  * </p>
- * 
+ *
  * <table border="1">
  * <tr>
  * <th> km</th>
@@ -189,7 +189,7 @@ import uk.me.jstott.jcoord.ellipsoid.Airy1830Ellipsoid;
  * <td> </td>
  * </tr>
  * </table>
- * 
+ *
  * <p>
  * Within each 100,000m square, the grid is further subdivided into 1000m
  * squares. These 1km squares are shown on Ordnance Survey 1:25000 and 1:50000
@@ -198,26 +198,20 @@ import uk.me.jstott.jcoord.ellipsoid.Airy1830Ellipsoid;
  * square, 22 represents the easting (in km) and 66 represents the northing (in
  * km). This is commonly called a four-figure grid reference.
  * </p>
- * 
- * <p>
- * It is possible to extend the four-figure grid reference for more accuracy.
- * For example, a six-figure grid reference would be accurate to 100m and an
- * eight-figure grid reference would be accurate to 10m.
- * </p>
- * 
+ *
  * <p>
  * When providing local references, the 2 characters representing the 100,000m
  * square are often omitted.
  * </p>
- * 
+ *
  * <p>
  * (c) 2006 Jonathan Stott
  * </p>
- * 
+ *
  * <p>
  * Created on 11-02-2006
  * </p>
- * 
+ *
  * @author Jonathan Stott
  * @version 1.0
  * @since 1.0
@@ -239,7 +233,7 @@ public class OSRef extends CoordinateSystem {
    * Create a new Ordnance Survey grid reference using a given easting and
    * northing. The easting and northing must be in metres and must be relative
    * to the origin of the British National Grid.
-   * 
+   *
    * @param easting
    *          the easting in metres. Must be greater than or equal to 0.0 and
    *          less than 800000.0.
@@ -265,7 +259,7 @@ public class OSRef extends CoordinateSystem {
    * and create a new OSRef object that represents that grid reference. The
    * first character must be H, N, S, O or T. The second character can be any
    * uppercase character from A through Z excluding I.
-   * 
+   *
    * @param ref
    *          a String representing a six-figure Ordnance Survey grid reference
    *          in the form XY123456
@@ -309,7 +303,7 @@ public class OSRef extends CoordinateSystem {
   /**
    * Convert this latitude and longitude into an OSGB (Ordnance Survey of Great
    * Britain) grid reference.
-   * 
+   *
    * @return the converted OSGB grid reference.
    * @since 1.1
    */
@@ -373,7 +367,7 @@ public class OSRef extends CoordinateSystem {
   /**
    * Return a String representation of this OSGB grid reference showing the
    * easting and northing.
-   * 
+   *
    * @return a String represenation of this OSGB grid reference
    * @since 1.0
    */
@@ -381,16 +375,35 @@ public class OSRef extends CoordinateSystem {
     return "(" + easting + ", " + northing + ")";
   }
 
+  private enum Precision {
+    SIX(100), EIGHT(10);
+
+    private int precision;
+
+    private Precision(int precision) {
+      this.precision = precision;
+    }
+
+    public int getPrecision() {
+      return precision;
+    }
+  }
 
   /**
-   * Return a String representation of this OSGB grid reference using the
-   * six-figure notation in the form XY123456
-   * 
-   * @return a String representing this OSGB grid reference in six-figure
-   *         notation
-   * @since 1.0
+   * @return a six-figure representation this OSGB grid reference i.e XY123456
    */
   public String toSixFigureString() {
+    return getOsRefWithPrecisionOf(Precision.SIX);
+  }
+
+  /**
+   * @return a six-figure representation this OSGB grid reference i.e XY12345678
+   */
+  public String toEightFigureString() {
+    return getOsRefWithPrecisionOf(Precision.EIGHT);
+  }
+
+  private String getOsRefWithPrecisionOf(Precision precision) {
     int hundredkmE = (int) Math.floor(easting / 100000);
     int hundredkmN = (int) Math.floor(northing / 100000);
     String firstLetter;
@@ -416,8 +429,8 @@ public class OSRef extends CoordinateSystem {
       index++;
     String secondLetter = Character.toString((char) index);
 
-    int e = (int) Math.floor((easting - (100000 * hundredkmE)) / 100);
-    int n = (int) Math.floor((northing - (100000 * hundredkmN)) / 100);
+    int e = (int) Math.floor((easting - (100000 * hundredkmE)) / precision.getPrecision());
+    int n = (int) Math.floor((northing - (100000 * hundredkmN)) / precision.getPrecision());
     String es = "" + e;
     if (e < 100)
       es = "0" + es;
@@ -437,7 +450,7 @@ public class OSRef extends CoordinateSystem {
    * Convert this OSGB grid reference to a latitude/longitude pair using the
    * OSGB36 datum. Note that, the LatLng object may need to be converted to the
    * WGS84 datum depending on the application.
-   * 
+   *
    * @return a LatLng object representing this OSGB grid reference using the
    *         OSGB36 datum
    * @since 1.0
@@ -505,7 +518,7 @@ public class OSRef extends CoordinateSystem {
 
   /**
    * Get the easting in metres relative the origin of the British National Grid.
-   * 
+   *
    * @return the easting in metres.
    * @since 1.0
    */
@@ -519,7 +532,7 @@ public class OSRef extends CoordinateSystem {
   /**
    * Get the northing in metres relative to the origin of the British National
    * Grid.
-   * 
+   *
    * @return the northing in metres.
    * @since 1.0
    */
@@ -532,7 +545,7 @@ public class OSRef extends CoordinateSystem {
 
   /**
    * Set the easting for this OSRef.
-   * 
+   *
    * @param easting
    *          the easting in metres. Must be greater than or equal to 0.0 and
    *          less than 800000.0.
@@ -554,7 +567,7 @@ public class OSRef extends CoordinateSystem {
 
   /**
    * Set the northing for this OSRef
-   * 
+   *
    * @param northing
    *          the northing in metres. Must be greater than or equal to 0.0 and
    *          less than 1400000.0.
