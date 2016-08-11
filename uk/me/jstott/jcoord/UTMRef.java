@@ -1,17 +1,31 @@
 package uk.me.jstott.jcoord;
 
+import uk.me.jstott.jcoord.datum.WGS84Datum;
+
 /**
- * Class to represent a UTM reference
+ * <p>
+ * This class is part of the Jcoord package. Visit the <a
+ * href="http://www.jstott.me.uk/jcoord/">Jcoord</a> website for more
+ * information.
+ * </p>
  * 
+ * <p>
+ * Class to represent a Universal Transverse Mercator (UTM) reference.
+ * </p>
+ * 
+ * <p>
  * (c) 2006 Jonathan Stott
+ * </p>
  * 
+ * <p>
  * Created on 11-Feb-2006
+ * </p>
  * 
  * @author Jonathan Stott
  * @version 1.0
  * @since 1.0
  */
-public class UTMRef {
+public class UTMRef extends CoordinateSystem {
 
   /**
    * Easting
@@ -26,28 +40,93 @@ public class UTMRef {
   /**
    * Latitude zone character
    */
-  private char   latZone;
+  private char latZone;
 
   /**
    * Longitude zone number
    */
-  private int    lngZone;
+  private int lngZone;
 
 
   /**
-   * Create a new UTM reference object.
+   * Create a new UTM reference object. Checks are made to make sure that the
+   * given parameters are roughly valid, but the checks are not exhaustive with
+   * regards to the easting value. Catching a NotDefinedOnUTMGridException does
+   * not necessarily mean that the UTM reference is well-formed. This is because
+   * that valid values for the easting vary depending on the latitude.
    * 
    * @param easting
-   *          the easting
+   *          the easting in metres.
    * @param northing
-   *          the northing
+   *          the northing in metres.
    * @param latZone
-   *          the latitude zone character
+   *          the latitude zone character.
    * @param lngZone
-   *          the longitude zone number
+   *          the longitude zone number.
+   * @throws NotDefinedOnUTMGridException
+   *           if any of the parameters are invalid. Be careful that a valid
+   *           value for the easting does not necessarily mean that the UTM
+   *           reference is well-formed. The current checks do not take into
+   *           account the varying range of valid values for the easting for
+   *           different latitudes.
    * @since 1.0
+   * @deprecated Use <code>{@link #UTMRef(int, char, double, double)}</code>
+   *             instead.
    */
-  public UTMRef(double easting, double northing, char latZone, int lngZone) {
+  public UTMRef(double easting, double northing, char latZone, int lngZone)
+      throws NotDefinedOnUTMGridException {
+    this(lngZone, latZone, easting, northing);
+  }
+
+
+  /**
+   * Create a new UTM reference object. Checks are made to make sure that the
+   * given parameters are roughly valid, but the checks are not exhaustive with
+   * regards to the easting value. Catching a NotDefinedOnUTMGridException does
+   * not necessarily mean that the UTM reference is well-formed. This is because
+   * that valid values for the easting vary depending on the latitude.
+   * 
+   * @param lngZone
+   *          the longitude zone number.
+   * @param latZone
+   *          the latitude zone character.
+   * @param easting
+   *          the easting in metres.
+   * @param northing
+   *          the northing in metres.
+   * @throws NotDefinedOnUTMGridException
+   *           if any of the parameters are invalid. Be careful that a valid
+   *           value for the easting does not necessarily mean that the UTM
+   *           reference is well-formed. The current checks do not take into
+   *           account the varying range of valid values for the easting for
+   *           different latitudes.
+   * @since 1.1
+   */
+  public UTMRef(int lngZone, char latZone, double easting, double northing)
+      throws NotDefinedOnUTMGridException {
+    
+    super(WGS84Datum.getInstance());
+
+    if (lngZone < 1 || lngZone > 60) {
+      throw new NotDefinedOnUTMGridException("Longitude zone (" + lngZone
+          + ") is not defined on the UTM grid.");
+    }
+
+    if (latZone < 'C' || latZone > 'X') {
+      throw new NotDefinedOnUTMGridException("Latitude zone (" + latZone
+          + ") is not defined on the UTM grid.");
+    }
+
+    if (easting < 0.0 || easting > 1000000.0) {
+      throw new NotDefinedOnUTMGridException("Easting (" + easting
+          + ") is not defined on the UTM grid.");
+    }
+
+    if (northing < 0.0 || northing > 10000000.0) {
+      throw new NotDefinedOnUTMGridException("Northing (" + northing
+          + ") is not defined on the UTM grid.");
+    }
+
     this.easting = easting;
     this.northing = northing;
     this.latZone = latZone;
@@ -63,8 +142,9 @@ public class UTMRef {
    */
   public LatLng toLatLng() {
     double UTM_F0 = 0.9996;
-    double a = RefEll.WGS84.getMaj();
-    double eSquared = RefEll.WGS84.getEcc();
+    double a = getDatum().getReferenceEllipsoid().getSemiMajorAxis();
+    double eSquared = getDatum().getReferenceEllipsoid()
+        .getEccentricitySquared();
     double ePrimeSquared = eSquared / (1.0 - eSquared);
     double e1 = (1 - Math.sqrt(1 - eSquared)) / (1 + Math.sqrt(1 - eSquared));
     double x = easting - 500000.0;
@@ -81,47 +161,39 @@ public class UTMRef {
     }
 
     double m = y / UTM_F0;
-    double mu =
-        m
-            / (a * (1.0 - eSquared / 4.0 - 3.0 * eSquared * eSquared / 64.0 - 5.0 * Math
-                .pow(eSquared, 3.0) / 256.0));
+    double mu = m
+        / (a * (1.0 - eSquared / 4.0 - 3.0 * eSquared * eSquared / 64.0 - 5.0 * Math
+            .pow(eSquared, 3.0) / 256.0));
 
-    double phi1Rad =
-        mu + (3.0 * e1 / 2.0 - 27.0 * Math.pow(e1, 3.0) / 32.0)
-            * Math.sin(2.0 * mu)
-            + (21.0 * e1 * e1 / 16.0 - 55.0 * Math.pow(e1, 4.0) / 32.0)
-            * Math.sin(4.0 * mu) + (151.0 * Math.pow(e1, 3.0) / 96.0)
-            * Math.sin(6.0 * mu);
+    double phi1Rad = mu + (3.0 * e1 / 2.0 - 27.0 * Math.pow(e1, 3.0) / 32.0)
+        * Math.sin(2.0 * mu)
+        + (21.0 * e1 * e1 / 16.0 - 55.0 * Math.pow(e1, 4.0) / 32.0)
+        * Math.sin(4.0 * mu) + (151.0 * Math.pow(e1, 3.0) / 96.0)
+        * Math.sin(6.0 * mu);
 
-    double n =
-        a / Math.sqrt(1.0 - eSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad));
+    double n = a
+        / Math.sqrt(1.0 - eSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad));
     double t = Math.tan(phi1Rad) * Math.tan(phi1Rad);
     double c = ePrimeSquared * Math.cos(phi1Rad) * Math.cos(phi1Rad);
-    double r =
-        a
-            * (1.0 - eSquared)
-            / Math.pow(1.0 - eSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad),
-                1.5);
+    double r = a * (1.0 - eSquared)
+        / Math.pow(1.0 - eSquared * Math.sin(phi1Rad) * Math.sin(phi1Rad), 1.5);
     double d = x / (n * UTM_F0);
 
-    double latitude =
-        (phi1Rad - (n * Math.tan(phi1Rad) / r)
-            * (d
-                * d
-                / 2.0
-                - (5.0 + (3.0 * t) + (10.0 * c) - (4.0 * c * c) - (9.0 * ePrimeSquared))
-                * Math.pow(d, 4.0) / 24.0 + (61.0 + (90.0 * t) + (298.0 * c)
-                + (45.0 * t * t) - (252.0 * ePrimeSquared) - (3.0 * c * c))
-                * Math.pow(d, 6.0) / 720.0))
-            * (180.0 / Math.PI);
+    double latitude = (phi1Rad - (n * Math.tan(phi1Rad) / r)
+        * (d
+            * d
+            / 2.0
+            - (5.0 + (3.0 * t) + (10.0 * c) - (4.0 * c * c) - (9.0 * ePrimeSquared))
+            * Math.pow(d, 4.0) / 24.0 + (61.0 + (90.0 * t) + (298.0 * c)
+            + (45.0 * t * t) - (252.0 * ePrimeSquared) - (3.0 * c * c))
+            * Math.pow(d, 6.0) / 720.0))
+        * (180.0 / Math.PI);
 
-    double longitude =
-        longitudeOrigin
-            + ((d - (1.0 + 2.0 * t + c) * Math.pow(d, 3.0) / 6.0 + (5.0
-                - (2.0 * c) + (28.0 * t) - (3.0 * c * c)
-                + (8.0 * ePrimeSquared) + (24.0 * t * t))
-                * Math.pow(d, 5.0) / 120.0) / Math.cos(phi1Rad))
-            * (180.0 / Math.PI);
+    double longitude = longitudeOrigin
+        + ((d - (1.0 + 2.0 * t + c) * Math.pow(d, 3.0) / 6.0 + (5.0 - (2.0 * c)
+            + (28.0 * t) - (3.0 * c * c) + (8.0 * ePrimeSquared) + (24.0 * t * t))
+            * Math.pow(d, 5.0) / 120.0) / Math.cos(phi1Rad))
+        * (180.0 / Math.PI);
 
     return new LatLng(latitude, longitude);
   }

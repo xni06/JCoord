@@ -1,15 +1,27 @@
 package uk.me.jstott.jcoord;
 
 /**
+ * <p>
+ * This class is part of the Jcoord package. Visit the <a
+ * href="http://www.jstott.me.uk/jcoord/">Jcoord</a> website for more
+ * information.
+ * </p>
+ * 
+ * <p>
  * Class to illustrate the use of the various functions of the classes in the
  * Jcoord package.
+ * </p>
  * 
+ * <p>
  * (c) 2006 Jonathan Stott
+ * </p>
  * 
+ * <p>
  * Created on 11-Feb-2006
+ * </p>
  * 
  * @author Jonathan Stott
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public class Test {
@@ -97,7 +109,7 @@ public class Test {
     // OSGB grid reference):
     System.out.println("Using WGS84");
     LatLng ll2w = new LatLng(52.657570301933, 1.7179215806451);
-    System.out.println("Latitude/Longitude: " + ll2.toString());
+    System.out.println("Latitude/Longitude: " + ll2.toString() + " : " + ll2.toDMSString());
     ll2w.toOSGB36();
     OSRef os2w = ll2w.toOSRef();
     System.out.println("Converted to OS Grid Ref: " + os2w.toString() + " - "
@@ -124,7 +136,7 @@ public class Test {
      */
 
     System.out.println("Convert UTM Reference to Latitude/Longitude");
-    UTMRef utm1 = new UTMRef(456463.99, 3335334.05, 'E', 12);
+    UTMRef utm1 = new UTMRef(12, 'E', 456463.99, 3335334.05);
     System.out.println("UTM Reference: " + utm1.toString());
     LatLng ll3 = utm1.toLatLng();
     System.out.println("Converted to Lat/Long: " + ll3.toString());
@@ -140,6 +152,94 @@ public class Test {
     UTMRef utm2 = ll4.toUTMRef();
     System.out.println("Converted to UTM Ref: " + utm2.toString());
     System.out.println();
+
+    mgrsTests();
+  }
+
+
+  /**
+   * Test the <code>{@link MGRSRef MGRSRef}</code> class.
+   * 
+   * @since 1.1
+   */
+  public static void mgrsTests() {
+
+    /*
+     * Convert UTM reference to MGRS reference
+     */
+    System.out.println("Convert UTM Reference to MGRS Reference");
+    UTMRef utm1 = new UTMRef(13, 'S', 443575.71, 4349755.98);
+    System.out.println("UTM Reference: " + utm1.toString());
+    MGRSRef mgrs1 = new MGRSRef(utm1);
+    System.out.println("MGRS Reference: " + mgrs1.toString());
+    System.out.println();
+
+    /*
+     * Convert MGRS reference to UTM reference
+     */
+    System.out.println("Convert MGRS reference to UTM reference");
+    // MGRSRef mgrs2 = new MGRSRef(13, 'S', 'D', 'D', 43576, 49756);
+    MGRSRef mgrs2 =
+        new MGRSRef(10, 'U', 'E', 'U', 0, 16300, MGRSRef.PRECISION_1M);
+    // 10UEU0000016300
+    System.out.println("MGRS Reference: " + mgrs2.toString());
+    UTMRef utm2 = mgrs2.toUTMRef();
+    System.out.println("UTM Reference: " + utm2.toString());
+    System.out.println();
+
+    /*
+     * Convert MGRS reference to Latitude/Longitude
+     */
+    System.out.println("Convert MGRS reference to latitude/longitude");
+    MGRSRef mgrs3 =
+        new MGRSRef(13, 'S', 'D', 'D', 43575, 49756, MGRSRef.PRECISION_1M);
+    System.out.println("MGRS Reference: " + mgrs3.toString());
+    UTMRef utm5 = mgrs3.toUTMRef();
+    System.out.println("UTM Reference: " + utm5.toString());
+    LatLng ll1 = mgrs3.toLatLng();
+    System.out.println("Latitude/Longitude: " + ll1.toString());
+    System.out.println();
+
+    /*
+     * Convert latitude/longitude to MGRS reference
+     */
+    System.out.println("Convert latitude/longitude to MGRS reference");
+    LatLng ll2 = new LatLng(39.295339, -105.654342);
+    //LatLng ll2 = new LatLng(48.9833, 8.2);
+    System.out.println("Latitude/Longitude: " + ll2.toString());
+    UTMRef utm3 = ll2.toUTMRef();
+    System.out.println("UTM Reference: " + utm3.toString());
+    MGRSRef mgrs4 = ll2.toMGRSRef();
+    System.out.println("MGRS Reference: " + mgrs4.toString());
+    System.out.println();
+
+    /*
+     * Create an MGRS reference from a String
+     */
+    System.out.println("Create an MGRS reference from a String");
+    //MGRSRef mgrs5 = new MGRSRef("13SDD4357549756");
+    MGRSRef mgrs5 = new MGRSRef("32UMU1078");
+    System.out.println(mgrs5.toString(MGRSRef.PRECISION_1M));
+    UTMRef utm4 = mgrs5.toUTMRef();
+    System.out.println("UTM Reference: " + utm4.toString());
+    LatLng ll3 = mgrs5.toLatLng();
+    System.out.println("Latitude/Longitude: " + ll3.toString());
+    System.out.println();
+    
+
+    //System.out.println("Convert MGRS references to UTM reference");
+    //for (char i = 'A'; i <= 'Z'; i++) {
+    //  for (char j = 'A'; j <= 'V'; j++) {
+    //    try {
+    //      MGRSRef mgrs = new MGRSRef(1, 'A', i, j, 0, 0, MGRSRef.PRECISION_1M);
+    //      UTMRef utm = mgrs.toUTMRef();
+        //  System.out.println("MGRS: " + mgrs.toString());
+         // System.out.println(" -->: " + utm.toString());
+    //    } catch (IllegalArgumentException e) {
+       //   System.out.println(e.getMessage());
+    //    }
+    //  }
+    //}
   }
 
 }
