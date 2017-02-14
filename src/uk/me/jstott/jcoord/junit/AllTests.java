@@ -36,6 +36,7 @@ public class AllTests {
     suite.addTestSuite(UTMRefTest.class);
     suite.addTestSuite(ECEFRefTest.class);
     suite.addTestSuite(IrishRefTest.class);
+    suite.addTestSuite(OSRefTest.class);
     //$JUnit-END$
     return suite;
   }

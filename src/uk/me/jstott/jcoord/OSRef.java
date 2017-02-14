@@ -438,11 +438,15 @@ public class OSRef extends CoordinateSystem {
     int e = (int) Math.floor((easting - (100000 * hundredkmE)) / precision.getPrecision());
     int n = (int) Math.floor((northing - (100000 * hundredkmN)) / precision.getPrecision());
     String es = "" + e;
+    if (e < 1000)
+      es = "0" + es;
     if (e < 100)
       es = "0" + es;
     if (e < 10)
       es = "0" + es;
     String ns = "" + n;
+    if (n < 1000)
+      ns = "0" + ns;
     if (n < 100)
       ns = "0" + ns;
     if (n < 10)
