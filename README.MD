@@ -5,6 +5,26 @@ Note that this repo is a _copy_ of the 2006 [Jcoord](http://www.jstott.me.uk/jco
 
 Below is a copy of the project homepage, as of 11th August 2016, in case it one day disappears...
 
+## Install ##
+The current version requires the build tool Maven. See
+https://maven.apache.org
+
+Maven can be installed on Ubuntu simply using:
+apt-get install maven
+
+To build, navigate to the project directory and do:
+mvn install
+
+This will also perform tests.
+
+This will install the JAR to your local Maven repository (e.g. ~/.m2 on a Linux
+system) allowing the project to be included in other projects using 
+Maven or Gradle.
+
+Group ID: uk.me.jstott
+Artifact ID: jcoord
+Version: 1.1-xni06-20170214
+
 ## Project homepage ##
 Conversion between latitude/longitude and grid references is not as simple as one would expect. Indeed, the maths involved is rather complex and not really for the faint-hearted! I have created a Java package which provides a simple API to allow conversion between OSGB (Ordnance Survey of Great Britain) grid references, UTM (Universal Transverse Mercator) references and latitude/longitude. OSGB Grid references can be returned as a standard six-figure grid reference using the 100km grid square letters (e.g. SK619847).
 
