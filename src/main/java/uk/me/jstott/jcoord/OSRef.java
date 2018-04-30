@@ -435,17 +435,18 @@ public class OSRef extends CoordinateSystem {
       index++;
     String secondLetter = Character.toString((char) index);
 
+	// 489600 - 400000 = 89600 / 100 = 896
     int e = (int) Math.floor((easting - (100000 * hundredkmE)) / precision.getPrecision());
     int n = (int) Math.floor((northing - (100000 * hundredkmN)) / precision.getPrecision());
     String es = "" + e;
-    if (e < 1000)
+    if (e < 1000 && precision == Precision.EIGHT_DIGITS)
       es = "0" + es;
     if (e < 100)
       es = "0" + es;
     if (e < 10)
       es = "0" + es;
     String ns = "" + n;
-    if (n < 1000)
+    if (n < 1000 && precision == Precision.EIGHT_DIGITS)
       ns = "0" + ns;
     if (n < 100)
       ns = "0" + ns;
