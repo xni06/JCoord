@@ -4,7 +4,7 @@
   <groupId>uk.me.jstott</groupId>
   <artifactId>jcoord</artifactId>
   <packaging>jar</packaging>
-  <version>1.3-xni06-20180430</version>
+  <version>1.3-xni06-20200415</version>
   <name>jcoord</name>
   <url>http://maven.apache.org</url>
   <dependencies>
