@@ -30,6 +30,18 @@ public class OSRefTest extends TestCase {
         }
     }
 
+    public void testOsRefToSixDigits() {
+        OSRef ref = new OSRef(489600, 128500);
+        assertEquals("SU896285", ref.getOsRefWithPrecisionOf(OSRef.Precision.SIX_DIGITS));
+    }
+
+    public void testOsRefToEightDigits() {
+        OSRef ref = new OSRef(489600, 128500);
+        assertEquals("SU89602850", ref.getOsRefWithPrecisionOf(OSRef.Precision.EIGHT_DIGITS));
+        ref = new OSRef(489610, 128510);
+        assertEquals("SU89612851", ref.getOsRefWithPrecisionOf(OSRef.Precision.EIGHT_DIGITS));
+    }
+
     private void getOsRefWithPrecisionOfEightDigits(double lat, double lng, String expected) {
         OSRef osRef = new uk.me.jstott.jcoord.LatLng(lat, lng).toOSRef();
         String actual = osRef.getOsRefWithPrecisionOf(OSRef.Precision.EIGHT_DIGITS);
